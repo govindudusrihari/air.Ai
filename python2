@@ -1,0 +1,454 @@
+import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+
+# ... (other libraries based on your project, like PyQt, etc.)
+
+# Check PyTorch version and CUDA support 
+print("PyTorch Version:", torch.__version__)
+print("CUDA Support:", torch.cuda.is_available()) 
+
+# Create a basic PyTorch model (example - image classification)
+class SimpleCNN(nn.Module):
+    def __init__(self):
+        super(SimpleCNN, self).__init__()
+        self.conv1 = nn.Conv2d(3, 6, 5)
+        # ... (Add other convolutional layers, pooling, fully connected layers) 
+
+    def forward(self, x):
+        # ... (Perform computations based on your CNN architecture)
+        return x
+import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+import os 
+
+# ( UI Framework Imports Here -  PyQt, Kivy, etc.)
+from PyQt5.QtWidgets import QLabel, QApplication, QWidget 
+# Or 
+# from kivy.app import App
+# from kivy.uix.label import Label
+# ... (Other imports from your UI framework)
+
+# ... (Previous SimpleCNN Model definition - Stage 1)
+
+def load_and_preprocess_image(image_path):
+    """Loads an image from a path and prepares it for your model."""
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+    image = Image.open(image_path).convert('RGB')  # Example for loading with PIL 
+    return transform(image).unsqueeze(0) # Add a batch dimension (1, C, H, W)
+
+def predict_image_class(image_tensor, model):
+    """Feeds image into your model and returns predicted class."""
+    # Pass the image to the model
+    with torch.no_grad():
+        output = model(image_tensor)
+    
+    # ( ... (Determine your predicted class label and score using your model's output) ... )
+
+    return predicted_class, confidence_score
+
+def display_result(predicted_class, confidence_score):
+    """Presents the prediction to the user through the chosen UI."""
+
+    # ( ... UI Framework Specific Code for Display ... )
+    # Example - assuming you have a PyQt Label widget (modify this based on your framework) 
+    result_label = QLabel(f"Predicted Class: {predicted_class}, Confidence: {confidence_score:.2f}")
+    result_label.show()  # Or show the Label within your window 
+
+if __name__ == "__main__":
+
+    model = SimpleCNN()
+    model.load_state_dict(torch.load("path/to/your/trained/model.pth"))
+    model.eval() # Put your model into evaluation mode 
+
+    # ( ... Start your UI framework application loop  ... )
+    # Example:
+    # app = QApplication([])
+    # window = QWidget()
+    # ...  (Build UI components like a button for uploading images, etc.) 
+    # app.exec_()
+
+    #  (In the button's click handler or other input trigger,  call these functions): 
+    user_uploaded_image_path = "path/to/user/uploaded/image.jpg"  
+    image_tensor = load_and_preprocess_image(user_uploaded_image_path) 
+    predicted_class, confidence_score = predict_image_class(image_tensor, model) 
+    display_result(predicted_class, confidence_score)
+import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+import os 
+from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, 
+                             QVBoxLayout, QHBoxLayout,  
+                             QFileDialog,  # For file selection
+                             )
+from PyQt5.QtGui import QPixmap
+from PIL import Image
+
+# (Previous model definition, data loading functions from Stages 1 and 2) 
+
+class ImageClassifierApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Image Classifier App")
+
+        # Load the model (same as Stage 2)
+        self.model = SimpleCNN()  
+        self.model.load_state_dict(torch.load("path/to/your/model.pth"))
+        self.model.eval()
+
+        # UI Setup
+        self.image_label = QLabel()  # To display the loaded image
+        self.result_label = QLabel() # To display the classification result
+
+        self.load_button = QPushButton("Load Image")
+        self.load_button.clicked.connect(self.load_image) 
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.image_label)
+        layout.addWidget(self.load_button)
+        layout.addWidget(self.result_label)
+
+        self.setLayout(layout)
+
+    def load_image(self):
+        """Opens a file dialog, loads the image, and displays it."""
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Image", "", "Image Files (*.png *.jpg *.jpeg)")
+
+        if file_path: 
+            # ... (Previous logic for data loading and preprocessing from Stage 2 - modify to use file_path) 
+            self.display_image(file_path)
+
+    def display_image(self, file_path):
+        """Displays the loaded image."""
+        image = QPixmap(file_path).scaled(self.image_label.size(), Qt.KeepAspectRatio)
+        self.image_label.setPixmap(image)
+
+    def classify_and_display(self, image_tensor):
+        """Runs the prediction logic and displays the result."""
+        predicted_class, confidence_score = predict_image_class(image_tensor, self.model)
+        self.result_label.setText(f"Predicted Class: {predicted_class}, Confidence: {confidence_score:.2f}")
+
+
+if __name__ == "__main__":
+    app = QApplication([])
+    window = ImageClassifierApp()
+    window.show()
+    app.exec_() 
+import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+import os 
+from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, 
+                             QVBoxLayout, QHBoxLayout, 
+                             QFileDialog, 
+                             )
+from PyQt5.QtGui import QPixmap
+from PIL import Image
+
+# (Model, Data Loading, and UI Components from Stages 1, 2, and 3 - Replace the "..." placeholders below with actual code)
+
+class ImageClassifierApp(QWidget):
+    def __init__(self):
+        # ... (Initialization from Stage 3)
+
+        # ... (UI setup from Stage 3) 
+
+    def load_image(self):
+        # ... (QFileDialog and Image Loading Logic from Stage 3)
+
+    def display_image(self, file_path):
+        # ... (Display image logic from Stage 3) 
+
+    def classify_and_display(self, image_tensor):
+        # ... (Prediction logic from Stage 3)
+
+    def handle_user_input(self):
+        """The heart of your interaction loop, handling events."""
+        
+        # (In this method, handle events from your UI - this is a very high-level placeholder): 
+        #  ... (You can get user actions - e.g., button clicks from a file uploader, or  typing in an input field)
+
+        if user_uploaded_image:  # Check if an image is uploaded
+            image_tensor = load_and_preprocess_image(user_uploaded_image_path)
+            predicted_class, confidence_score = predict_image_class(image_tensor, self.model) 
+            self.display_result(predicted_class, confidence_score) 
+
+        elif user_action_involving_text:  #  For a text-based chatbot example 
+            response = generate_text(user_input, model)  # Get a response from your model (using a method like `generate_text`)
+            display_response_text(response) #  (You will have to replace with the specific display method for text)
+        
+        # (Handle other potential events - e.g., button clicks for changing settings)
+
+        # Continue running the main application loop - call this method recursively
+        # or schedule a new event after a delay.
+
+if __name__ == "__main__":
+    app = QApplication([])
+    window = ImageClassifierApp()
+    window.show()
+
+    # ... (Important: Call the `handle_user_input` function here)
+    # window.handle_user_input() # Option 1: Trigger manually 
+
+    # Option 2: Use an event timer: 
+    timer = QTimer() 
+    timer.timeout.connect(window.handle_user_input)
+    timer.start(100) # Trigger the event every 100ms 
+
+    app.exec_()
+from PyQt5.QtCore import QTimer # ... other imports
+
+class ImageClassifierApp(QWidget): 
+    def __init__(self): 
+        # ... other code (same as previous stages) 
+        
+        # Create the timer when initializing the UI
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.handle_user_input)
+        self.timer.start(100)
+
+    def handle_user_input(self):
+        """Handles events"""
+        
+        # Check for events:
+        #  You'll probably add an if statement here:
+        #   -  if self.has_new_image:  #  After image is loaded
+        #          classify_and_display(self.current_image) 
+
+        # Alternatively, if your app just periodically performs classification, use a simple check: 
+        if self.image_to_classify: #  This is where you would put your code to determine if an image is ready
+            image_tensor = load_and_preprocess_image(self.image_to_classify)
+            predicted_class, confidence_score = predict_image_class(image_tensor, self.model) 
+            self.result_label.setText(f"Predicted Class: {predicted_class}, Confidence: {confidence_score:.2f}")
+        
+    # (Rest of your app - UI functions, display, etc.) 
+import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+import os 
+from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, 
+                             QVBoxLayout, QHBoxLayout, 
+                             QFileDialog, 
+                             QProgressBar, 
+                             QMessageBox # For displaying error messages
+                             )
+from PyQt5.QtGui import QPixmap, QFont
+from PIL import Image
+from PyQt5.QtCore import QTimer
+
+# (Previous model definition, data loading, UI elements, and handle_user_input from previous stages - replace ... with actual code)
+
+class ImageClassifierApp(QWidget):
+    def __init__(self):
+        # ... (Initialization from previous stages)
+        
+        # (UI setup from previous stages)
+
+    def load_image(self):
+        # ... (Open file dialog - same as before)
+
+        if file_path:
+            try:
+                self.display_image(file_path)
+            except (FileNotFoundError, OSError) as e:  
+                QMessageBox.warning(self, "Error", f"Unable to load the image: {e}")
+
+    def display_image(self, file_path):
+        # ... (Display image logic from previous stages)
+
+    def classify_and_display(self, image_tensor):
+        # ... (Prediction logic from previous stages) 
+
+        try:
+            predicted_class, confidence_score = predict_image_class(image_tensor, self.model) 
+            self.result_label.setText(f"Predicted Class: {predicted_class}, Confidence: {confidence_score:.2f}")
+
+        except Exception as e: 
+            QMessageBox.warning(self, "Error", f"Classification failed: {e}")
+
+    def handle_user_input(self):
+        # ... (Check if an image is loaded, handle classification - same as previous stages)
+
+if __name__ == "__main__":
+    # ... (Application startup) 
+import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+import os 
+from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, 
+                             QVBoxLayout, QHBoxLayout, 
+                             QFileDialog, 
+                             QProgressBar, 
+                             QMessageBox,
+                             QComboBox, 
+                             QGridLayout, # For arranging UI elements
+                             )
+from PyQt5.QtGui import QPixmap, QFont, QPainter, QColor
+from PIL import Image
+from PyQt5.QtCore import QTimer, Qt
+
+# (Previous model definition, data loading, UI elements, and handle_user_input)
+
+class ImageClassifierApp(QWidget):
+    def __init__(self):
+        # ... (Initialization, UI components - same as before)
+       
+        # Add another QLabel to display more info:
+        self.additional_info_label = QLabel("")
+        self.additional_info_label.setWordWrap(True)  # Enable text wrapping
+        self.additional_info_label.setAlignment(Qt.AlignCenter)
+
+        # Update UI layout 
+        layout = QVBoxLayout() 
+        layout.addWidget(self.image_label)
+        layout.addWidget(self.load_button)
+        layout.addWidget(self.progress_bar)
+        layout.addWidget(self.result_label) 
+        layout.addWidget(self.model_selection) 
+        layout.addWidget(self.additional_info_label) 
+        self.setLayout(layout) 
+
+    # ... (load_image, display_image)
+
+    def classify_and_display(self, image_tensor):
+        try:
+            predicted_class, confidence_score = predict_image_class(image_tensor, self.model)
+            self.result_label.setText(f"Predicted Class: {predicted_class}")
+
+            # Additional information
+            additional_info = f"Confidence Score: {confidence_score:.2f}"
+            self.additional_info_label.setText(additional_info)
+
+            # Visual Confidence Indicator 
+            confidence_bar_height = 20 
+            confidence_bar_width = self.width() - 50 # Set the width dynamically
+            confidence_bar_x = 25 # Set the left edge 
+            confidence_bar_y = self.result_label.y() + self.result_label.height() + 10
+
+            self.update() # Refresh to repaint
+
+        except Exception as e: 
+            QMessageBox.warning(self, "Error", f"Classification failed: {e}")
+
+    def paintEvent(self, event):
+        """Handles drawing the confidence indicator (repainting the UI)."""
+        super().paintEvent(event)
+        painter = QPainter(self) 
+
+        # Visualize Confidence:
+        confidence_bar_height = 20 
+        confidence_bar_width = self.width() - 50  # Use the app's width for flexibility
+        confidence_bar_x = 25 
+        confidence_bar_y = self.result_label.y() + self.result_label.height() + 10
+
+        painter.fillRect(confidence_bar_x, confidence_bar_y, int(confidence_bar_width * self.confidence_score), confidence_bar_height, QColor(0, 255, 0))  # Green for confident
+        painter.fillRect(int(confidence_bar_x + confidence_bar_width * self.confidence_score), confidence_bar_y, int(confidence_bar_width * (1 - self.confidence_score)), confidence_bar_height, QColor(255, 0, 0)) # Red for less confident
+
+    # ... (handle_user_input) 
+import torch
+import torch.nn as nn
+import torchvision.transforms as transforms
+import os 
+from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, 
+                             QVBoxLayout, QHBoxLayout, 
+                             QFileDialog, 
+                             QProgressBar, 
+                             QMessageBox,
+                             QComboBox, 
+                             QGridLayout,
+                             )
+from PyQt5.QtGui import QPixmap, QFont, QPainter, QColor
+from PIL import Image
+from PyQt5.QtCore import QTimer, Qt, QThread, pyqtSignal
+
+# ... (Previous model definition, data loading, UI elements, and handle_user_input - replace ... with actual code)
+
+class Worker(QThread):  
+    """Worker thread for background processing."""
+
+    finished = pyqtSignal()
+    progress = pyqtSignal(int)  # Signal for updating the progress bar
+    result = pyqtSignal(str, float)  # Signal for displaying classification results 
+    error = pyqtSignal(str) # Signal for sending errors
+
+    def __init__(self, image_path, model):
+        super().__init__()
+        self.image_path = image_path
+        self.model = model
+
+    def run(self):
+        try:
+            # ... (Load and preprocess the image, similar to Stage 4)
+            self.progress.emit(20) # Emit progress signal for loading 
+
+            image_tensor = load_and_preprocess_image(self.image_path)  
+            self.progress.emit(50) # Preprocessing completed (50%)
+            predicted_class, confidence_score = predict_image_class(image_tensor, self.model)  
+            self.progress.emit(80) #  Prediction (80%)
+
+            # Send results back to the main thread
+            self.result.emit(predicted_class, confidence_score) 
+
+        except Exception as e: 
+            self.error.emit(str(e))  # Send error to the main thread
+        finally:
+            self.finished.emit() #  Indicate that the thread is done
+
+class ImageClassifierApp(QWidget):
+    def __init__(self):
+        # ... (Initialization and UI components)
+ 
+    # ... (load_image and display_image are the same) 
+    
+    def classify_and_display(self): 
+        """Starts the worker thread for classification."""
+
+        if not hasattr(self, 'worker') or self.worker is None: 
+            self.worker = Worker(self.image_path, self.model) # Pass in your model here
+
+            self.worker.finished.connect(self.on_thread_finished)
+            self.worker.progress.connect(self.update_progress) 
+            self.worker.result.connect(self.update_result)
+            self.worker.error.connect(self.handle_error) 
+            self.worker.start()
+
+    def on_thread_finished(self): 
+        """Handles thread completion.""" 
+        #  This might be where you update the UI with a final success/completion message
+        self.worker = None # Release worker after its task
+
+    def update_progress(self, value): 
+        """Updates the progress bar.""" 
+        self.progress_bar.setValue(value)
+
+    def update_result(self, predicted_class, confidence_score): 
+        """Updates the prediction label and confidence display."""
+        self.result_label.setText(f"Predicted Class: {predicted_class}")
+        self.additional_info_label.setText(f"Confidence Score: {confidence_score:.2f}") 
+        # (Update your visual confidence indicator)
+
+    def handle_error(self, error_message):
+        """Handles errors that occur in the worker thread."""
+        QMessageBox.warning(self, "Error", f"Classification failed: {error_message}")
+
+    def handle_user_input(self): 
+        """Handles UI events (button clicks) and calls the thread function."""
+        # ... (In this method, you handle UI events from a button or other UI interactions. This will usually start the processing).
+        # (Check for the case when an image is loaded)
+        self.classify_and_display() # Trigger the prediction and updates the UI
+       
+if __name__ == "__main__":
+    app = QApplication([])
+    window = ImageClassifierApp()
+    window.show()
+    app.exec_()
+# Install PyInstaller if you haven't already:
+pip install pyinstaller
+
+# Create the executable
+pyinstaller --onefile your_script.py  # Replace 'your_script.py' with the actual name of your Python file
