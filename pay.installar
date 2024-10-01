@@ -1,0 +1,3 @@
+# Use PyInstaller:
+pip install pyinstaller
+pyinstaller --onefile your_script.py  #  Replace 'your_script.py' with your actual Python script filename
